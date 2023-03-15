@@ -1,0 +1,9 @@
+# IntelliJ files and folders
+.idea/
+*.iml
+
+# Maven build artifacts
+webdriver_java/target
+
+# Personal chromedriver
+webdriver_java/resources/chromedriver

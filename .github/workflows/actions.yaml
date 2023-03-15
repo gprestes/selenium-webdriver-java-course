@@ -1,0 +1,36 @@
+# Event name
+name: on_push
+
+# When the event should run
+on:
+  push:
+    branch:
+      - "**" # This will run on all branches and must be quoted to be handled by yaml
+
+# What jobs to execute
+
+jobs:
+
+  build_and_test:
+    runs-on: ubuntu-latest
+    env:
+      RUNNER_OS: true
+      HEADLESS_CHROME: true
+
+    steps:
+      - name: Set a start time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: 16
+      - name: Run tests with maven
+        working-directory: webdriver_java
+        run: mvn test
+      - name: Collect build data
+        working-directory: webdriver_java
+        if: always()
+        run: |
+          echo "github_actions_total_duration $(expr $(date +%s) - ${START_TIME})" | curl --data-binary @- ${{ secrets.PUSHGATEWAY_URL }}/metrics/job/github_actions
+          ./resources/test_result_script.sh
