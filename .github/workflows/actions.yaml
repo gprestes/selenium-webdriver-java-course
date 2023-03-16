@@ -1,26 +1,23 @@
-# Event name
 name: on_push
 
-# When the event should run
 on:
   push:
     branch:
-      - "**" # This will run on all branches and must be quoted to be handled by yaml
+      - "**" # This will run on all branches, and must be quoted to be handled by yaml
   schedule:
     - cron: '*/10 * * * *' # This will run every 10th minute. Calculated with: https://crontab.guru/#*/10_*_*_*_*
-
-# What jobs to execute
 
 jobs:
 
   build_and_test:
     runs-on: ubuntu-latest
+
     env:
       RUNNER_OS: true
       HEADLESS_CHROME: true
 
     steps:
-      - name: Set a start time
+      - name: Set start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
@@ -36,5 +33,5 @@ jobs:
           PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
         if: always()
         run: |
-          echo "github_actions_total_duration $(expr $(date +%s) - ${START_TIME})" | curl --data-binary @- ${{ secrets.PUSHGATEWAY_URL }}/metrics/job/github_actions
+          echo "github_actions_total_duration $(expr $(date +%s) - ${START_TIME})" | curl --data-binary @- ${PUSHGATEWAY_URL}/metrics/job/github_actions
           ./resources/test_result_script.sh
