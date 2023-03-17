@@ -4,8 +4,8 @@ on:
   push:
     branch:
       - "**" # This will run on all branches, and must be quoted to be handled by yaml
-  schedule:
-    - cron: '*/10 * * * *' # This will run every 10th minute. Calculated with: https://crontab.guru/#*/10_*_*_*_*
+#  schedule:
+#    - cron: '*/10 * * * *' # This will run every 10th minute. Calculated with: https://crontab.guru/#*/10_*_*_*_*
 
 jobs:
 
