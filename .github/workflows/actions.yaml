@@ -15,6 +15,7 @@ jobs:
     env:
       RUNNER_OS: true
       HEADLESS_CHROME: true
+      BUILDEVENT_FILE: './buildevents.txt' # This is root of our repository
 
     steps:
       - name: Set start time
@@ -29,14 +30,21 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 16
+      - name: Telemetry start - Maven tests
+        if: always()
+        run: |
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+          echo "STEP_ID=run-maven-tests" >> $GITHUB_ENV
       - name: Run tests with maven
         working-directory: webdriver_java
         run: mvn test
-      - name: Collect build data
+      - name: Telemetry - Collect build data
         working-directory: webdriver_java
         env:
           PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
+          BUILDEVENT_FILE: ../${{ env.BUILDEVENT_FILE }}
         if: always()
         run: |
           echo "github_actions_total_duration $(expr $(date +%s) - ${START_TIME})" | curl --data-binary @- ${PUSHGATEWAY_URL}/metrics/job/github_actions
           ./resources/test_result_script.sh
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
