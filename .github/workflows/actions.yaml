@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Set start time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
-      - uses: kvrhdn/gha-buildevents@v2
+      - uses: kvrhdn/gha-buildevents@v3
         with:
           apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
           dataset: selenium-build-pipeline
